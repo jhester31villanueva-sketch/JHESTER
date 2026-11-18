@@ -1,1 +1,424 @@
 # JHESTER
+import tkinter as tk
+import random
+
+questions = [
+    {"q": "Ano ang ginagamit para mag-comment sa Python?",
+     "choices": ["//", "#", "/* */", "--"], "answer": 1},
+    {"q": "Alin ang tamang way para mag-print?",
+     "choices": ["echo()", "print()", "console.log()", "printf()"], "answer": 1},
+    {"q": "Ano ang tawag sa 'name = 5'?",
+     "choices": ["Function", "Variable", "Loop", "Comment"], "answer": 1},
+    {"q": "Bakit importante ang indentation sa Python?",
+     "choices": ["Para maganda", "Para malinis", "Para gumana ang code", "Optional lang"], "answer": 2},
+    {"q": "Alin ang valid na variable name?",
+     "choices": ["2name", "my-name", "my_name", "my name"], "answer": 2},
+    {"q": "Ano ang output ng: print(5 + 3)?",
+     "choices": ["53", "8", "5+3", "Error"], "answer": 1},
+    {"q": "Paano maglagay ng string sa variable?",
+     "choices": ["x = 5", 'x = "hello"', "x == hello", "string x"], "answer": 1},
+    {"q": "Alin ang HINDI data type sa Python?",
+     "choices": ["int", "str", "float", "char"], "answer": 3},
+    {"q": "Ano ang purpose ng #?",
+     "choices": ["Math", "Comment", "Print", "Variable"], "answer": 1},
+    {"q": "Alin ang tamang syntax?",
+     "choices": ['print "Hi"', 'print("Hi")',
+                 "print['Hi']", "print{'Hi'}"], "answer": 1}
+]
+
+
+class CardQuizGame:
+
+    def __init__(self, root):
+        self.root = root
+        self.root.title("LESSON 2 CARD QUIZ GAME")
+        self.root.geometry("800x600")
+        self.root.configure(bg="black")
+
+        self.level = 0
+        self.score = 0
+        self.state = "menu"
+        self.current_q = None
+
+        self.main_frame = tk.Frame(root, bg="black")
+        self.main_frame.pack(fill="both", expand=True)
+
+        self.show_menu()
+
+    def clear_frame(self):
+        for widget in self.main_frame.winfo_children():
+            widget.destroy()
+
+    # MAIN MENU
+    def show_menu(self):
+        self.clear_frame()
+        self.state = "menu"
+
+        tk.Label(
+            self.main_frame,
+            text="LESSON 2: BASIC SYNTAX",
+            font=("Consolas", 26, "bold"),
+            fg="lime", bg="black"
+        ).pack(pady=80)
+
+        tk.Label(
+            self.main_frame,
+            text="PYTHON PROGRAMMING",
+            font=("Consolas", 16),
+            fg="white", bg="black"
+        ).pack()
+
+        tk.Label(
+            self.main_frame,
+            text="Learn first before you play!",
+            font=("Consolas", 14),
+            fg="yellow", bg="black"
+        ).pack(pady=20)
+
+        tk.Button(
+            self.main_frame,
+            text="OPEN LESSON",
+            font=("Consolas", 18),
+            command=self.show_lesson,
+            bg="yellow", fg="black"
+        ).pack(pady=40)
+
+    # LESSON / REVIEWER
+    def show_lesson(self):
+        self.clear_frame()
+        self.state = "lesson"
+
+        tk.Label(
+            self.main_frame,
+            text="LESSON 2: BASIC SYNTAX",
+            font=("Consolas", 22, "bold"),
+            fg="lime", bg="black"
+        ).pack(pady=15)
+
+        lesson_text = """
+1. COMMENTS (#)
+Used to add notes in Python.
+Example:
+# This is a comment
+
+2. PRINTING OUTPUT
+The print() function displays output.
+Example:
+print("Hello World")
+
+3. VARIABLES
+Used to store data or information.
+Example:
+name = "Juan"
+age = 18
+
+4. INDENTATION
+Spaces at the beginning of a line.
+Important for organizing code blocks.
+Example:
+if age >= 18:
+    print("Adult")
+
+5. VARIABLE NAMING
+Rules for naming variables:
+- Cannot start with a number.
+- No spaces allowed.
+- Use underscore instead of spaces.
+Example:
+my_name = "Ana"
+
+6. ARITHMETIC OPERATORS
+Used for mathematical operations.
++ Addition
+- Subtraction
+* Multiplication
+/ Division
+Example:
+print(5 + 3)  # Output: 8
+
+7. STRINGS
+Text enclosed in quotation marks.
+Example:
+message = "Hello"
+
+8. PYTHON DATA TYPES
+int   = Whole numbers (10)
+str   = Text ("Hello")
+float = Decimal numbers (3.14)
+bool  = True or False
+
+9. IMPORTANT SYMBOLS
+=   Assignment operator
+==  Comparison operator
+#   Comment symbol
+()  Used in function calls
+
+10. CORRECT PYTHON SYNTAX
+Always use proper syntax.
+Example:
+print("Welcome to Python!")
+"""
+
+        container = tk.Frame(self.main_frame, bg="black")
+        container.pack(fill="both", expand=True, padx=30, pady=5)
+
+        scrollbar = tk.Scrollbar(container)
+        scrollbar.pack(side="right", fill="y")
+
+        text_area = tk.Text(
+            container,
+            font=("Consolas", 12),
+            fg="white",
+            bg="#151515",
+            wrap="word",
+            yscrollcommand=scrollbar.set,
+            padx=15,
+            pady=10,
+            height=20
+        )
+        text_area.pack(side="left", fill="both", expand=True)
+
+        scrollbar.config(command=text_area.yview)
+
+        text_area.insert("1.0", lesson_text)
+        text_area.config(state="disabled")
+
+        tk.Button(
+            self.main_frame,
+            text="NEXT: GAME INSTRUCTIONS",
+            font=("Consolas", 14),
+            command=self.show_instructions,
+            bg="yellow", fg="black"
+        ).pack(pady=15)
+
+    # GAME INSTRUCTIONS
+    def show_instructions(self):
+        self.clear_frame()
+
+        tk.Label(
+            self.main_frame,
+            text="HOW TO PLAY",
+            font=("Consolas", 26, "bold"),
+            fg="lime", bg="black"
+        ).pack(pady=50)
+
+        instructions = """
+1. There are 10 levels in the game.
+
+2. Choose one card from the four cards.
+
+3. Each card will show one question.
+
+4. Select the correct answer from the
+   four available choices.
+
+5. Correct answer = +1 point.
+
+6. Wrong answer = 0 points.
+
+7. Finish all 10 levels to see your score.
+
+GOOD LUCK AND HAVE FUN!
+"""
+
+        tk.Label(
+            self.main_frame,
+            text=instructions,
+            font=("Consolas", 14),
+            fg="white", bg="black",
+            justify="left"
+        ).pack(pady=10)
+
+        tk.Button(
+            self.main_frame,
+            text="START GAME",
+            font=("Consolas", 18),
+            command=self.start_game,
+            bg="yellow", fg="black"
+        ).pack(pady=30)
+
+    # START GAME
+    def start_game(self):
+        self.level = 0
+        self.score = 0
+        random.shuffle(questions)
+        self.show_cards()
+
+    # CARD SELECTION
+    def show_cards(self):
+        self.clear_frame()
+        self.state = "cards"
+
+        tk.Label(
+            self.main_frame,
+            text=f"LEVEL {self.level+1} / 10",
+            font=("Consolas", 24),
+            fg="lime", bg="black"
+        ).pack(pady=20)
+
+        tk.Label(
+            self.main_frame,
+            text=f"Score: {self.score}",
+            font=("Consolas", 14),
+            fg="white", bg="black"
+        ).pack()
+
+        tk.Label(
+            self.main_frame,
+            text="Pumili ng card!",
+            font=("Consolas", 14),
+            fg="white", bg="black"
+        ).pack(pady=10)
+
+        card_frame = tk.Frame(
+            self.main_frame, bg="black"
+        )
+        card_frame.pack(pady=50)
+
+        for i in range(4):
+            btn = tk.Button(
+                card_frame,
+                text=str(i+1),
+                font=("Consolas", 20),
+                width=6,
+                height=4,
+                bg="#1E1E50",
+                fg="white",
+                command=lambda i=i: self.pick_card(i)
+            )
+            btn.grid(row=0, column=i, padx=10)
+
+    # PICK CARD
+    def pick_card(self, card_num):
+        self.current_q = questions[self.level]
+        self.show_question()
+
+    # SHOW QUESTION
+    def show_question(self):
+        self.clear_frame()
+        self.state = "question"
+
+        tk.Label(
+            self.main_frame,
+            text=f"LEVEL {self.level+1} / 10",
+            font=("Consolas", 20),
+            fg="lime", bg="black"
+        ).pack(pady=10)
+
+        tk.Label(
+            self.main_frame,
+            text=f"Score: {self.score}",
+            font=("Consolas", 12),
+            fg="white", bg="black"
+        ).pack()
+
+        tk.Label(
+            self.main_frame,
+            text=self.current_q["q"],
+            font=("Consolas", 14),
+            fg="white", bg="black",
+            wraplength=700
+        ).pack(pady=40)
+
+        for i, choice in enumerate(
+            self.current_q["choices"]
+        ):
+            tk.Button(
+                self.main_frame,
+                text=f"{i+1}. {choice}",
+                font=("Consolas", 14),
+                width=50,
+                bg="#327CFF",
+                fg="white",
+                command=lambda i=i: self.check_answer(i)
+            ).pack(pady=5)
+
+    # CHECK ANSWER
+    def check_answer(self, answer):
+        self.clear_frame()
+
+        correct = (
+            answer == self.current_q["answer"]
+        )
+
+        if correct:
+            self.score += 1
+
+            tk.Label(
+                self.main_frame,
+                text="TAMA! 🎉",
+                font=("Consolas", 24),
+                fg="lime", bg="black"
+            ).pack(pady=100)
+
+        else:
+            correct_ans = self.current_q["choices"][
+                self.current_q["answer"]
+            ]
+
+            tk.Label(
+                self.main_frame,
+                text="MALI! 😢",
+                font=("Consolas", 24),
+                fg="red", bg="black"
+            ).pack(pady=50)
+
+            tk.Label(
+                self.main_frame,
+                text=f"Tamang sagot: {correct_ans}",
+                font=("Consolas", 14),
+                fg="white", bg="black"
+            ).pack()
+
+        self.level += 1
+
+        if self.level >= 10:
+            self.show_result()
+        else:
+            self.root.after(2000, self.show_cards)
+
+    # FINAL RESULT
+    def show_result(self):
+        self.clear_frame()
+
+        tk.Label(
+            self.main_frame,
+            text="QUIZ COMPLETED!",
+            font=("Consolas", 26, "bold"),
+            fg="lime", bg="black"
+        ).pack(pady=70)
+
+        tk.Label(
+            self.main_frame,
+            text=f"YOUR SCORE: {self.score}/10",
+            font=("Consolas", 22),
+            fg="white", bg="black"
+        ).pack(pady=20)
+
+        if self.score >= 8:
+            message = "EXCELLENT! GREAT JOB!"
+        elif self.score >= 5:
+            message = "GOOD WORK! KEEP PRACTICING!"
+        else:
+            message = "KEEP STUDYING! YOU CAN DO IT!"
+
+        tk.Label(
+            self.main_frame,
+            text=message,
+            font=("Consolas", 14),
+            fg="yellow", bg="black"
+        ).pack(pady=20)
+
+        tk.Button(
+            self.main_frame,
+            text="BACK TO MENU",
+            font=("Consolas", 16),
+            command=self.show_menu,
+            bg="yellow", fg="black"
+        ).pack(pady=30)
+
+
+# RUN THE GAME
+root = tk.Tk()
+game = CardQuizGame(root)
+root.mainloop()
